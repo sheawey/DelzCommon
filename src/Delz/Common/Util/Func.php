@@ -14,7 +14,7 @@ class Func
      *
      * @param callable $func
      * @param null $args
-     * @param callable|null $validator
+     * @param callable|null $validator 检查参数函数
      * @return \Closure
      */
     public static function closure(callable $func, $args = null, callable $validator = null)
