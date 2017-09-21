@@ -84,7 +84,7 @@ class File
             if ($file != '.' && $file != '..') {
                 $realPath = realpath($dir . '/' . $file);
                 if (is_dir($realPath)) {
-                    self::rmdir($realPath, true);
+                    static::rmdir($realPath, true);
                 } else {
                     unlink($realPath);
                 }
@@ -117,7 +117,7 @@ class File
 
         //如果目录不存在，创建目录
         $dir = dirname($filePath);
-        self::mkdir($dir);
+        static::mkdir($dir);
         return file_put_contents($filePath, $content, LOCK_EX);
     }
 
