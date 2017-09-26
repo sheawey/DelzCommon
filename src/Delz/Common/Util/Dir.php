@@ -99,4 +99,72 @@ class Dir
 
         return true;
     }
+
+    /**
+     * 标准化目录
+     *
+     * 举例：
+     * c:\\dir1\dir2\dir3//../dir4/./dir5 转化为c:/dir1/dir2/dir4/dir5
+     * /usr/local/dir1/dir2/../dir3\dir4/ 转化为/usr/local/dir1/dir3/dir4
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function normalize($path)
+    {
+        $path = str_replace('\\', '/', $path);
+        $prefix = static::prefix($path);
+        $path = substr($path, strlen($prefix));
+        $parts = array_filter(explode('/', $path), 'strlen');
+        $tokens = array();
+        foreach ($parts as $part) {
+            switch ($part) {
+                case '.':
+                    break;
+                case '..':
+                    if (0 !== count($tokens)) {
+                        array_pop($tokens);
+                    }
+                    break;
+                default:
+                    $tokens[] = $part;
+            }
+        }
+        return $prefix . implode('/', $tokens);
+    }
+
+    /**
+     * 获取路径前缀
+     *
+     * 举例：
+     * c://dir1/dir2/dir3 返回  c://
+     * ftp://dir1/dir2/dir3 返回 ftp://
+     * /usr/local/src 返回 /
+     * ./dir1/dir2 返回 空
+     * ../dir1/dir2 返回 空
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function prefix($path)
+    {
+        preg_match('|^(?P<prefix>([a-zA-Z]+:)?//?)|', $path, $matches);
+        if (empty($matches['prefix'])) {
+            return '';
+        }
+        return strtolower($matches['prefix']);
+    }
+
+    /**
+     * 是否绝对路径
+     *
+     * @param string $path
+     * @return bool
+     */
+    public static function isAbsolute($path)
+    {
+        return '' !== static::prefix($path);
+    }
+
+
 }
