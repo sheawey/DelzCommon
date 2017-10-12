@@ -2,6 +2,18 @@
 
 包括：
 
+## Delz\Common\Uti\Dir
+
+文件夹工具类
+
+## Delz\Common\Uti\File
+
+文件工具类
+
+## Delz\Common\Uti\Func
+
+回调函数工具类
+
 ## Delz\Common\Uti\Http
 
 封装了GuzzleHttp的Client类
