@@ -27,7 +27,11 @@ class File
 
         //如果目录不存在，创建目录
         $dir = dirname($filePath);
-        Dir::make($dir);
+        if(!Dir::make($dir)) {
+            throw new \InvalidArgumentException(
+                sprintf("can not make the directory of '%s'", $dir)
+            );
+        }
         return file_put_contents($filePath, $content, LOCK_EX);
     }
 
