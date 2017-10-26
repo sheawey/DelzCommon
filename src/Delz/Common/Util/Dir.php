@@ -28,9 +28,7 @@ class Dir
             return true;
         }
 
-        mkdir($dir, $mode, true);
-
-        return true;
+        return mkdir($dir, $mode, true);
     }
 
     /**
