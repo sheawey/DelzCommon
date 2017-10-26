@@ -10,6 +10,13 @@ namespace Delz\Common\Util;
 class Str
 {
     /**
+     * HTMLPurifier对象
+     *
+     * @var \HTMLPurifier
+     */
+    protected static $purifier;
+
+    /**
      * 判断字符串$value是否匹配正则$pattern
      *
      * @param string $pattern
@@ -73,7 +80,7 @@ class Str
     }
 
     /**
-     * 转化成驼峰命令法
+     * 转化成驼峰命名法
      *
      * @param string $value
      * @return string
@@ -84,7 +91,7 @@ class Str
     }
 
     /**
-     * 转化成Pascal命令法
+     * 转化成Pascal命名法
      *
      * @param string $value
      * @return string
@@ -293,6 +300,111 @@ class Str
         $value = preg_replace('![' . preg_quote($separator) . '\s]+!u', $separator, $value);
 
         return trim($value, $separator);
+    }
+
+    /**
+     * 转化ubb代码为html
+     *
+     * @param string $value
+     * @return string
+     */
+    public static function ubb($value)
+    {
+        $ubbMap = [
+            "/\\t/is",
+            "/\[h1\](.+?)\[\/h1\]/is",
+            "/\[h2\](.+?)\[\/h2\]/is",
+            "/\[h3\](.+?)\[\/h3\]/is",
+            "/\[h4\](.+?)\[\/h4\]/is",
+            "/\[h5\](.+?)\[\/h5\]/is",
+            "/\[h6\](.+?)\[\/h6\]/is",
+            "/\[separator\]/is",
+            "/\[center\](.+?)\[\/center\]/is",
+            "/\[url=http:\/\/([^\[]*)\](.+?)\[\/url\]/is",
+            "/\[url=([^\[]*)\](.+?)\[\/url\]/is",
+            "/\[url\]http:\/\/([^\[]*)\[\/url\]/is",
+            "/\[url\]([^\[]*)\[\/url\]/is",
+            "/\[img\](.+?)\[\/img\]/is",
+            "/\[color=(.+?)\](.+?)\[\/color\]/is",
+            "/\[size=(.+?)\](.+?)\[\/size\]/is",
+            "/\[sup\](.+?)\[\/sup\]/is",
+            "/\[sub\](.+?)\[\/sub\]/is",
+            "/\[pre\](.+?)\[\/pre\]/is",
+            "/\[email\](.+?)\[\/email\]/is",
+            "/\[colorTxt\](.+?)\[\/colorTxt\]/is",
+            "/\[emot\](.+?)\[\/emot\]/is",
+            "/\[i\](.+?)\[\/i\]/is",
+            "/\[u\](.+?)\[\/u\]/is",
+            "/\[b\](.+?)\[\/b\]/is",
+            "/\[quote\](.+?)\[\/quote\]/is",
+            "/\[code\](.+?)\[\/code\]/is",
+            "/\[php\](.+?)\[\/php\]/is",
+            "/\[sig\](.+?)\[\/sig\]/is",
+            "/\\n/is"
+        ];
+
+        $replaceMap = [
+            "  ",
+            "<h1>\\1</h1>",
+            "<h2>\\1</h2>",
+            "<h3>\\1</h3>",
+            "<h4>\\1</h4>",
+            "<h5>\\1</h5>",
+            "<h6>\\1</h6>",
+            "",
+            "<span style=\"text-align:center\">\\1</span>",
+            "<a href=\"http://\\1\" target=_blank>\\2</a>",
+            "<a href=\"http://\\1\" target=_blank>\\2</a>",
+            "<a href=\"http://\\1\" target=_blank>\\1</a>",
+            "<a href=\"\\1\" target=_blank>\\1</a>",
+            "<img src=\\1>",
+            "<span style=\"color:\\1\">\\2</span>",
+            "<span style=\"font-size:\\1\">\\2</span>",
+            "<sup>\\1</sup>",
+            "<sub>\\1</sub>",
+            "<pre>\\1</pre>",
+            "<a href='mailto:\\1'>\\1</a>",
+            "color_txt('\\1')",
+            "emot('\\1')",
+            "<i>\\1</i>",
+            "<u>\\1</u>",
+            "<b>\\1</b>",
+            " <div class='quote'><h5>引用:</h5><blockquote>\\1</blockquote></div>",
+            "self::highlight_code('\\1')",
+            "self::highlight_code('\\1')",
+            "<div class='sign'>\\1</div>",
+            "<br>"
+        ];
+
+        return preg_replace($ubbMap, $replaceMap, $value);
+    }
+
+
+    /**
+     * 过滤xss攻击代码
+     *
+     * 使用HTMLPurifier库
+     *
+     * @param string $value
+     * @param array $config
+     * @return string
+     */
+    public static function removeXss($value, $config = [])
+    {
+        $defaultConfig = [
+            'Core.Encoding' => 'UTF-8',
+            'HTML.Doctype' => 'XHTML 1.0 Transitional'
+        ];
+        if (count($config) == 0) {
+            if (!static::$purifier) {
+                $config = array_merge($defaultConfig, $config);
+                static::$purifier = new \HTMLPurifier($config);
+            }
+            return static::$purifier->purify($value);
+        }
+        $config = array_merge($defaultConfig, $config);
+        $purifier = new \HTMLPurifier($config);
+        return $purifier->purify($value);
     }
 
     /**

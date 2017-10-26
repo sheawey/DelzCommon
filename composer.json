@@ -12,7 +12,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.0.0",
-        "guzzlehttp/guzzle": "~6.2.1"
+        "guzzlehttp/guzzle": "~6.2.1",
+        "ezyang/htmlpurifier": "dev-master"
     },
     "autoload": {
         "psr-4": {
