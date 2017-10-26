@@ -98,6 +98,8 @@ class Str
      */
     public static function studly($value)
     {
+        //将原有大写转换成-的格式，避免ucword将原来的大写改成小写
+        $value = preg_replace('#([A-Z])#', '-$1', $value);
         return preg_replace('#\s+#', '', ucwords(str_replace(['-', '_'], ' ', $value)));
     }
 
