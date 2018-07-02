@@ -83,7 +83,7 @@ class Validator
     public static function mobile($value)
     {
         $value = (string)$value;
-        return !!preg_match('#^13[\d]{9}$|^17[0-9]\d{8}$|14^[0-9]\d{8}|^15[0-9]\d{8}$|^18[0-9]\d{8}$#', $value);
+        return !!preg_match('#^13[\d]{9}$|^17[0-9]\d{8}$|14^[0-9]\d{8}|^15[0-9]\d{8}$|^18[0-9]\d{8}$|^19[0-9]\d{8}$|^92[0-9]\d{8}$|^98[0-9]\d{8}$|^16[0-9]\d{8}$|^17[0-9]\d{8}$#', $value);
     }
 
     /**
